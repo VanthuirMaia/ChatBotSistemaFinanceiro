@@ -1,0 +1,515 @@
+print("\n========== Kingston Sistemas e Software ==========")
+print("\n")
+print("\n===== SGF - Sistema de Gerenciamento Financeiro =====")
+print("\n")
+
+dados = {}
+
+
+# Essa função vai gerar um ID automático, para pesquisas futuras, dando a possibilidade de consultar, alterar ou excluir precisamente.
+def gerar_id(dados):
+    if 'transacoes' not in dados:
+        dados['transacoes'] = {'id_atual': 1}
+    else:
+        dados['transacoes']['id_atual'] += 1
+    return dados['transacoes']['id_atual']
+
+
+"""
+Funções do MENU RECEITAS
+
+"""
+
+def listar_receitas(dados): #FUNÇÃO PARA LISTAR AS RECEITAS CADASTRADAS
+    print("\n===== Lista de Receitas =====")
+    if 'receitas' in dados and dados['receitas']:
+        for receita in dados['receitas']:
+            print(f"Descrição: {receita['descricao']}")
+            print(f"Valor: R$ {receita['valor']}")
+            print("---------------------------")
+    else:
+        print("Não há receitas cadastradas.")
+
+
+def adicionar_receita(dados): #FUNÇÃO PARA ADICIONAR A RECEITA AO DICIONÁRIO
+    print("\n===== Adicionar Receita =====")
+
+  # NESSE CAMPO, SERÁ CRIADO UM ID AUTOMÁTICO PARA TODAS AS TRANSAÇÕES, PARA BUSCAS E ALTERAÇÕES FUTURAS.
+    novo_id = gerar_id(dados)
+    descricao = input("Descrição da receita: ")
+    valor = input_float("Valor da receita: R$ ")
+    data = input("Data da receita (formato DD/MM/AAAA): ")
+
+    nova_receita = {
+        'id': novo_id,
+        'descricao': descricao,
+        'valor': valor,
+        'data': data
+    }
+
+    if 'receitas' not in dados:
+        dados['receitas'] = [] # ESSE CÓDIGO CRIA UM DICIONÁRIO COM A NOVA RECEITA.
+
+    dados['receitas'].append(nova_receita)
+
+    print(f"\nReceita adicionada com sucesso! (ID: {novo_id})\n")
+
+
+def editar_receita(dados): #FUNÇÃO PARA EDITAR A RECEITA
+    print("\n===== Editar Receita =====")
+
+    id_a_editar = int(input("Digite o ID da receita que deseja editar: ")) #SOLICITA AO USUÁRIO O ID DA RECEITA A SER EDITADA
+    receita_encontrada = None # BUSCA A RECEITA PELO ID INFORMADO
+    if 'receitas' in dados:
+        for receita in dados['receitas']:
+            if receita['id'] == id_a_editar:
+                receita_encontrada = receita
+                break
+
+    if receita_encontrada is not None: #EXIBE AS INFORMAÇÕES DA RECEITA A SER EDITADA
+        print("\nDetalhes da Receita:")
+        print(f"ID: {receita_encontrada['id']}")
+        print(f"Descrição: {receita_encontrada['descricao']}")
+        print(f"Valor: R$ {receita_encontrada['valor']}")
+        print(f"Data: {receita_encontrada['data']}")
+        # DADOS A SEREM ALTERADOS
+        receita_encontrada['descricao'] = input("\nNova descrição: ")
+        receita_encontrada['valor'] = input_float("Novo valor: R$ ")
+        receita_encontrada['data'] = input("Nova data (formato DD/MM/AAAA): ")
+
+        print("\nReceita editada com sucesso!")
+    else:
+        print("Receita não encontrada. Verifique o ID e tente novamente.")
+
+
+def excluir_receita(dados): #FUNÇÃO PARA EXCLUIR A RECEITA
+    print("\n===== Excluir Receita =====")
+
+    id_a_excluir = int(input("Digite o ID da receita que deseja excluir: ")) #SOLICITA AO USUÁRIO O ID DA RECEITA A SER EXCLUIDA
+    indice_receita_a_excluir = None # BUSCA A RECEITA PELO ID INFORMADO
+    if 'receitas' in dados:
+        for i, receita in enumerate(dados['receitas']):
+            if receita['id'] == id_a_excluir:
+                indice_receita_a_excluir = i
+                break
+
+    if indice_receita_a_excluir is not None: # EXIBE OS DETALHES DA RECEITA, ANTES DE EXCLUIR
+        print("\nDetalhes da Receita a ser Excluída:")
+        print(f"ID: {dados['receitas'][indice_receita_a_excluir]['id']}")
+        print(f"Descrição: {dados['receitas'][indice_receita_a_excluir]['descricao']}")
+        print(f"Valor: R$ {dados['receitas'][indice_receita_a_excluir]['valor']}")
+        print(f"Data: {dados['receitas'][indice_receita_a_excluir]['data']}")
+
+        confirmacao = input("\nTem certeza que deseja excluir esta receita? (S/N): ").upper() # CONFIRMAÇÃO DA EXCLUSÃO COM "S" PARA "SIM", OU "N" PARA "NÃO"
+
+        if confirmacao == 'S':  # REMOVE A RECEITA
+            del dados['receitas'][indice_receita_a_excluir]
+            print("\nReceita excluída com sucesso!")
+        else:
+            print("\nExclusão cancelada.")
+    else:
+        print("Receita não encontrada. Verifique o ID e tente novamente.")
+
+
+"""
+Funções do MENU DESPESAS
+"""
+
+def listar_despesas(dados): #FUNÇÃO PARA LISTAR AS DESPESAS CADASTRADAS
+    print("\n===== Lista de Despesas =====")
+    if 'despesas' in dados and dados['despesas']:
+        for despesa in dados['despesas']:
+            print(f"Descrição: {despesa['descricao']}")
+            print(f"Valor: R$ {despesa['valor']}")
+            print("---------------------------")
+    else:
+        print("Não há despesas cadastradas.")
+
+def adicionar_despesa(dados): #FUNÇÃO PARA ADICIONAR A DESPESA AO DICIONÁRIO
+    print("\n===== Adicionar Despesa =====")
+    novo_id = gerar_id(dados) # NESSE CAMPO, SERÁ CRIADO UM ID AUTOMÁTICO PARA TODAS AS TRANSAÇÕES, PARA BUSCAS E ALTERAÇÕES FUTURAS.
+    descricao = input("Descrição da despesa: ")
+    valor = input_float("Valor da despesa: R$ ")
+    data = input("Data da despesa (formato DD/MM/AAAA): ")
+
+    nova_despesa = {
+        'id': novo_id,
+        'descricao': descricao,
+        'valor': valor,
+        'data': data
+    }
+
+    if 'despesas' not in dados: # ESSE CÓDIGO CRIA UM DICIONÁRIO COM A NOVA DESPESA.
+        dados['despesas'] = []
+
+    dados['despesas'].append(nova_despesa)
+    print(f"\nDespesa adicionada com sucesso! (ID: {novo_id})\n")
+
+def editar_despesa(dados): # FUNÇÃO PARA EDITAR A DESPESA
+    print("\n===== Editar Despesa =====")
+    id_a_editar = int(input("Digite o ID da despesa que deseja editar: ")) #SOLICITA AO USUÁRIO O ID DA DESPESA A SER EDITADA
+    despesa_encontrada = None # BUSCA A DESPESA PELO ID INFORMADO
+
+    if 'despesas' in dados:
+        for despesa in dados['despesas']:
+            if despesa['id'] == id_a_editar:
+                despesa_encontrada = despesa
+                break
+
+    if despesa_encontrada is not None: #EXIBE AS INFORMAÇÕES DA DESPESA A SER EDITADA
+        print("\nDetalhes da Despesa:")
+        print(f"ID: {despesa_encontrada['id']}")
+        print(f"Descrição: {despesa_encontrada['descricao']}")
+        print(f"Valor: R$ {despesa_encontrada['valor']}")
+        print(f"Data: {despesa_encontrada['data']}")
+
+        despesa_encontrada['descricao'] = input("\nNova descrição: ")
+        despesa_encontrada['valor'] = input_float(input("Novo valor: R$ "))
+        despesa_encontrada['data'] = input("Nova data (formato DD/MM/AAAA): ")
+
+        print("\nDespesa editada com sucesso!")
+    else:
+        print("Despesa não encontrada. Verifique o ID e tente novamente.")
+
+def excluir_despesa(dados): #FUNÇÃO PARA EXCLUIR A DESPESA
+    print("\n===== Excluir Despesa =====")
+    id_a_excluir = int(input("Digite o ID da despesa que deseja excluir: ")) #SOLICITA AO USUÁRIO O ID DA DESPESA A SER EXCLUIDA
+    indice_despesa_a_excluir = None # BUSCA A DESPESA PELO ID INFORMADO
+
+    if 'despesas' in dados:
+        for i, despesa in enumerate(dados['despesas']):
+            if despesa['id'] == id_a_excluir:
+                indice_despesa_a_excluir = i
+                break
+
+    if indice_despesa_a_excluir is not None: # EXIBE OS DETALHES DA DESPESA, ANTES DE EXCLUIR
+        print("\nDetalhes da Despesa a ser Excluída:")
+        print(f"ID: {dados['despesas'][indice_despesa_a_excluir]['id']}")
+        print(f"Descrição: {dados['despesas'][indice_despesa_a_excluir]['descricao']}")
+        print(f"Valor: R$ {dados['despesas'][indice_despesa_a_excluir]['valor']}")
+        print(f"Data: {dados['despesas'][indice_despesa_a_excluir]['data']}")
+
+        confirmacao = input("\nTem certeza que deseja excluir esta despesa? (S/N): ").upper() # CONFIRMAÇÃO DA EXCLUSÃO COM "S" PARA "SIM", OU "N" PARA "NÃO"
+
+        if confirmacao == 'S': # REMOVE A RECEITA
+            del dados['despesas'][indice_despesa_a_excluir]
+            print("\nDespesa excluída com sucesso!")
+        else:
+            print("\nExclusão cancelada.")
+    else:
+        print("Despesa não encontrada. Verifique o ID e tente novamente.")
+
+
+
+"""
+Funções do MENU INVESTIMENTOS
+"""
+
+def listar_investimentos(dados):  # FUNÇÃO PARA LISTAR OS INVESTIMENTOS CADASTRADOS
+    print("\n===== Lista de Investimentos =====")
+    if 'investimentos' in dados and dados['investimentos']:
+        for investimento in dados['investimentos']:
+            print(f"Descrição: {investimento['descricao']}")
+            print(f"Valor: R$ {investimento['valor']}")
+            print(f"Data: {investimento['data']}")
+            print("---------------------------")
+    else:
+        print("Não há investimentos cadastrados.")
+
+def adicionar_investimento(dados):  # FUNÇÃO PARA ADICIONAR O INVESTIMENTO AO DICIONÁRIO
+    print("\n===== Adicionar Investimento =====")
+
+    # Nesse campo, será criado um ID automático para todas as transações, para buscas e alterações futuras.
+    novo_id = gerar_id(dados)
+    descricao = input("Descrição do investimento: ")
+    valor = input_float("Valor do investimento: R$ ")
+    data = input("Data do investimento (formato DD/MM/AAAA): ")
+
+    novo_investimento = {
+        'id': novo_id,
+        'descricao': descricao,
+        'valor': valor,
+        'data': data
+    }
+
+    if 'investimentos' not in dados:  # Esse código cria um dicionário com o novo investimento.
+        dados['investimentos'] = []
+
+    dados['investimentos'].append(novo_investimento)
+
+    print(f"\nInvestimento adicionado com sucesso! (ID: {novo_id})\n")
+
+
+def editar_investimento(dados):  # FUNÇÃO PARA EDITAR O INVESTIMENTO
+    print("\n===== Editar Investimento =====")
+
+    id_a_editar = int(input("Digite o ID do investimento que deseja editar: "))  # SOLICITA AO USUÁRIO O ID DO INVESTIMENTO A SER EDITADO
+    investimento_encontrado = None  # BUSCA O INVESTIMENTO PELO ID INFORMADO
+    if 'investimentos' in dados:
+        for investimento in dados['investimentos']:
+            if investimento['id'] == id_a_editar:
+                investimento_encontrado = investimento
+                break
+
+    if investimento_encontrado is not None:  # EXIBE AS INFORMAÇÕES DO INVESTIMENTO A SER EDITADO
+        print("\nDetalhes do Investimento:")
+        print(f"ID: {investimento_encontrado['id']}")
+        print(f"Descrição: {investimento_encontrado['descricao']}")
+        print(f"Valor: R$ {investimento_encontrado['valor']}")
+        print(f"Data: {investimento_encontrado['data']}")
+        # DADOS A SEREM ALTERADOS
+        investimento_encontrado['descricao'] = input("\nNova descrição: ")
+        investimento_encontrado['valor'] = input_float("Novo valor: R$ ")
+        investimento_encontrado['data'] = input("Nova data (formato DD/MM/AAAA): ")
+
+        print("\nInvestimento editado com sucesso!")
+    else:
+        print("Investimento não encontrado. Verifique o ID e tente novamente.")
+
+
+def excluir_investimento(dados):  # FUNÇÃO PARA EXCLUIR O INVESTIMENTO
+    print("\n===== Excluir Investimento =====")
+
+    id_a_excluir = int(input("Digite o ID do investimento que deseja excluir: "))  # SOLICITA AO USUÁRIO O ID DO INVESTIMENTO A SER EXCLUÍDO
+    indice_investimento_a_excluir = None  # BUSCA O INVESTIMENTO PELO ID INFORMADO
+    if 'investimentos' in dados:
+        for i, investimento in enumerate(dados['investimentos']):
+            if investimento['id'] == id_a_excluir:
+                indice_investimento_a_excluir = i
+                break
+
+    if indice_investimento_a_excluir is not None:  # EXIBE OS DETALHES DO INVESTIMENTO, ANTES DE EXCLUIR
+        print("\nDetalhes do Investimento a ser Excluído:")
+        print(f"ID: {dados['investimentos'][indice_investimento_a_excluir]['id']}")
+        print(f"Descrição: {dados['investimentos'][indice_investimento_a_excluir]['descricao']}")
+        print(f"Valor: R$ {dados['investimentos'][indice_investimento_a_excluir]['valor']}")
+        print(f"Data: {dados['investimentos'][indice_investimento_a_excluir]['data']}")
+
+        confirmacao = input("\nTem certeza que deseja excluir este investimento? (S/N): ").upper()  # CONFIRMAÇÃO DA EXCLUSÃO
+
+        if confirmacao == 'S':  # REMOVE O INVESTIMENTO
+            del dados['investimentos'][indice_investimento_a_excluir]
+            print("\nInvestimento excluído com sucesso!")
+        else:
+            print("\nExclusão cancelada.")
+    else:
+        print("Investimento não encontrado. Verifique o ID e tente novamente.")
+
+
+"""
+Funções do MENU RELATÓRIOS
+"""
+
+def relatorio_balanco(dados):  # FUNÇÃO PARA EXIBIR O RELATÓRIO DE BALANÇO
+    print("\n===== Relatório de Balanço =====")
+    total_receitas = sum(receita['valor'] for receita in dados.get('receitas', []))
+    total_despesas = sum(despesa['valor'] for despesa in dados.get('despesas', []))
+    total_investimentos = sum(investimento['valor'] for investimento in dados.get('investimentos', []))
+
+    saldo_total = total_receitas - total_despesas - total_investimentos
+    print(f"Total de Receitas: R$ {total_receitas:.2f}")
+    print(f"Total de Despesas: R$ {total_despesas:.2f}")
+    print(f"Total de Investimentos: R$ {total_investimentos:.2f}")
+    print(f"Saldo Total: R$ {saldo_total:.2f}")
+    print("---------------------------")
+
+def relatorio_receitas(dados):  # FUNÇÃO PARA EXIBIR O RELATÓRIO DE RECEITAS
+    print("\n===== Relatório de Receitas =====")
+    if 'receitas' in dados and dados['receitas']:
+        for receita in dados['receitas']:
+            print(f"ID: {receita['id']}")
+            print(f"Descrição: {receita['descricao']}")
+            print(f"Valor: R$ {receita['valor']}")
+            print(f"Data: {receita['data']}")
+            print("---------------------------")
+    else:
+        print("Não há receitas cadastradas.")
+
+def relatorio_despesas(dados):  # FUNÇÃO PARA EXIBIR O RELATÓRIO DE DESPESAS
+    print("\n===== Relatório de Despesas =====")
+    if 'despesas' in dados and dados['despesas']:
+        for despesa in dados['despesas']:
+            print(f"ID: {despesa['id']}")
+            print(f"Descrição: {despesa['descricao']}")
+            print(f"Valor: R$ {despesa['valor']}")
+            print(f"Data: {despesa['data']}")
+            print("---------------------------")
+    else:
+        print("Não há despesas cadastradas.")
+
+def relatorio_investimentos(dados):  # FUNÇÃO PARA EXIBIR O RELATÓRIO DE INVESTIMENTOS
+    print("\n===== Relatório de Investimentos =====")
+    if 'investimentos' in dados and dados['investimentos']:
+        for investimento in dados['investimentos']:
+            print(f"ID: {investimento['id']}")
+            print(f"Descrição: {investimento['descricao']}")
+            print(f"Valor: R$ {investimento['valor']}")
+            print(f"Data: {investimento['data']}")
+            print("---------------------------")
+    else:
+        print("Não há investimentos cadastrados.")
+
+
+"""
+Funções do VALIDAÇÃO DO SISTEMA
+
+"""
+# FUNÇÃO PARA CORRIGIR A ENTRADA DE VALORES, TRATANDO O ERRO CASO O USUÁRIO DIGITE ALGO DIFERENTE.
+def input_float(mensagem):
+    while True:
+        try:
+            valor = float(input(mensagem))
+            return valor
+        except ValueError:
+            print("Por favor, insira um valor numérico válido.")
+
+
+# FUNÇÃO PARA VERIFICAR A OPÇÃO DIGITADA, CASO NÃO SEJA UMA DAS DISPONÍVEIS, RETORNA UMA MENSAGEM
+def obter_opcao_menu():
+    while True:
+        opcao = input("Escolha uma opção: ")
+        if opcao.isdigit() and 1 <= int(opcao) <= 5:
+            return int(opcao)
+        else:
+            print("Opção inválida. Por favor, escolha uma opção de 1 a 5.")
+
+"""
+Funções do MENU PRINCIPAL
+
+"""
+
+def menu_principal(): # EXIBE O MENU PRINCIPAL
+    print("[1] - Gerenciar Receitas")
+    print("[2] - Gerenciar Despesas")
+    print("[3] - Gerenciar Investimentos")
+    print("[4] - Relatórios")
+    print("[5] - Sair")
+
+def receitas(): # Exibe o Menu de RECEITAS
+    print("\n Submenu de Receitas --")
+    print("[1] - Listar Receita")
+    print("[2] - Adicionar Receitas")
+    print("[3] - Editar Receitas")
+    print("[4] - Excluir Receitas")
+    print("[5] - Voltar")
+
+def despesas(): # Exibe o Menu de Despesas
+    print("\n  Submenu de Despesas --")
+    print("[1] - Listar Despesa")
+    print("[2] - Adicionar Despesas")
+    print("[3] - Editar Receitas")
+    print("[4] - Excluir Receitas")
+    print("[5] - Voltar")
+
+def investimentos(): # Exibe o Menu de Investimentos
+    print("\n  Submenu de Investimentos --")
+    print("[1] - Listar Investimento")
+    print("[2] - Adicionar Investimentos")
+    print("[3] - Editar Investimentos")
+    print("[4] - Excluir Investimentos")
+    print("[5] - Voltar")
+
+def relatorios(): # Exibe o Menu de Relatórios
+    print("\n Submenu de Relatórios --")
+    print("[1] - Relatório de Balanço")
+    print("[2] - Relatório de Receitas")
+    print("[3] - Relatório de Despesas")
+    print("[4] - Relatório de Investimentos")
+    print("[5] - Voltar")
+
+def gerenciar_receitas():
+    while True:
+        receitas()
+        escolha = input("Escolha uma opção: ")
+
+        if escolha == '1':
+           listar_receitas(dados)
+        elif escolha == '2':
+            adicionar_receita(dados)
+        elif escolha == '3':
+            editar_receita(dados)
+        elif escolha == '4':
+            excluir_receita(dados)
+        elif escolha == '5':
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
+
+def gerenciar_despesas():
+    while True:
+        despesas()
+        escolha = input("Escolha uma opção: ")
+
+        if escolha == '1':
+           listar_despesas(dados)
+        elif escolha == '2':
+            adicionar_despesa(dados)
+        elif escolha == '3':
+            editar_despesa(dados)
+        elif escolha == '4':
+            excluir_despesa(dados)
+        elif escolha == '5':
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
+
+def gerenciar_investimentos():
+    while True:
+        investimentos()
+        escolha = input("Escolha uma opção: ")
+
+        if escolha == '1':
+           listar_investimentos(dados)
+        elif escolha == '2':
+            adicionar_investimento(dados)
+        elif escolha == '3':
+            editar_investimento(dados)
+        elif escolha == '4':
+            excluir_investimento(dados)
+        elif escolha == '5':
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
+
+def gerar_relatorios():
+    while True:
+        relatorios()
+        escolha = input("Escolha uma opção: ")
+
+        if escolha == '1':
+            relatorio_balanco(dados) # RELATÓRIO DE BALANÇO
+        elif escolha == '2':
+            # Relatório de receitas
+            relatorio_receitas(dados) # RELATÓRIO DE RECEITAS
+        elif escolha == '3':
+            # Relatório de despesas
+            relatorio_despesas(dados) # RELATÓRIO DE DESPESAS
+        elif escolha == '4':
+            # Relatório de despesas
+            relatorio_investimentos(dados) # RELATÓRIO DE INVESTIMENTOS
+        elif escolha == '5':
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
+
+def main():
+    while True:
+        menu_principal()
+        opcao = obter_opcao_menu()
+
+        if opcao == 1:
+            gerenciar_receitas()
+        elif opcao == 2:
+            gerenciar_despesas()
+        elif opcao == 3:
+            gerenciar_investimentos()
+        elif opcao == 4:
+            gerar_relatorios()
+        elif opcao == 5:
+            print("Saindo do programa. Até mais!")
+            break
+        else:
+            print("Opção inválida. Tente novamente.") # Caso o usuário digite uma opção inválida
+
+if __name__ == "__main__":
+    main()
